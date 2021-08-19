@@ -6,7 +6,7 @@ const dataPath = path.join(__dirname, '..', 'data', 'users.json');
 const getAllUsers = (req, res) => {
   return readDataFile(dataPath)
     .then((users) => res.status(200).send(users))
-    .catch((err) => res.status(400).send(err));
+    .catch((err) => res.status(500).send(err));
 };
 
 const findUser = (req, res) => {
@@ -22,7 +22,7 @@ const findUser = (req, res) => {
       const userFound = users.find((user) => user._id === req.params.id);
       res.status(200).send(userFound);
     })
-    .catch((err) => res.status(400).send(err));
+    .catch((err) => res.status(500).send(err));
 };
 
 module.exports = {
