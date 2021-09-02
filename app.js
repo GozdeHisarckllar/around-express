@@ -1,11 +1,25 @@
 const express = require('express');
+const mongoose = require('mongoose');
 
 const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+mongoose.connect('mongodb://localhost:27017/aroundb');
 
 const cardsRouter = require('./routes/cards');
 const usersRouter = require('./routes/users');
 
 const { PORT = 3000 } = process.env;
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: '612fccd38e2b7c098bdb86d5',
+  };
+
+  next();
+});
 
 app.use('/', cardsRouter);
 app.use('/', usersRouter);
