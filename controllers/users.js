@@ -22,7 +22,7 @@ module.exports.findUser = (req, res) => {
 
 module.exports.createUser = (req, res) => {
   User.create({ ...req.body })
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message });
