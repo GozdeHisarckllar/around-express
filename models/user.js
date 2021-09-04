@@ -17,10 +17,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator(v) { // https?:\/{2}w*[a-z0-9.\-]+[a-z0-9\-._~:?\/%#[\]@!$&'()*+,;=]*
-        return /https?:\/{2}w*[a-z0-9.\-]+\/?[a-z0-9\-._~:?\/%#\[\]@!$&'\()*\+,;=]*\/?#?/i.test(v);
+      validator(v) {
+        return /https?:\/{2}(?:w{3}\.)?[a-z0-9\-\.]+(?:\.com\b)(?:\/[a-zA-Z0-9\-\._~:?\/%#[\]@!$&'()*\+,;=]*)?/.test(v);
       },
-      message: (props) => `${props.value} is not a valid link!`, //
+      message: (props) => `${props.value} is not a valid link!`,
     },
   },
 });

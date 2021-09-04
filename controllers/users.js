@@ -7,17 +7,29 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.findUser = (req, res) => {
-  User.findById(req.params.userId)
+  const { userId } = req.params;
+
+  User.findById(userId)
     .then((user) => res.status(200).send({ data: user }))
-    .catch(() => res.status(404).send({ message: 'User ID not found' }));
-};// .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'User ID not found' });
+        return;
+      }
+      res.status(500).send({ message: err.message });
+    });
+};
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
+  User.create({ ...req.body })
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message });
+        return;
+      }
+      res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.updateProfile = (req, res) => {
@@ -33,7 +45,13 @@ module.exports.updateProfile = (req, res) => {
     },
   )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message });
+        return;
+      }
+      res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.updateAvatar = (req, res) => {
@@ -49,9 +67,11 @@ module.exports.updateAvatar = (req, res) => {
     },
   )
     .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message });
+        return;
+      }
+      res.status(500).send({ message: err.message });
+    });
 };
-
-/* const ERROR_CODE = 400;
-
-if(err.name === 'SomeErrorName') return res.status(ERROR_CODE).send(...) */

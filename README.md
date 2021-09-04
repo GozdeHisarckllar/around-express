@@ -1,8 +1,8 @@
 # Around the U.S. Back End  
   
-* Project 12 for the [Practicum by Yandex](https://practicum.yandex.com) curriculum.
+* Project 12/13 for the [Practicum by Yandex](https://practicum.yandex.com) curriculum.
 
-* The project includes Node.js and Express.js methods, routers and middlewares.
+* The project uses Node.js and Express.js methods, MongoDB database, mongoose, routers and middlewares.
 
 ## Directories  
   

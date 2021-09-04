@@ -1,7 +1,5 @@
 const Card = require('../models/card');
 
-// testuser "_id": "612fccd38e2b7c098bdb86d5",
-
 module.exports.getAllCards = (req, res) => {
   Card.find({})
     .populate(['owner', 'likes'])
@@ -10,36 +8,66 @@ module.exports.getAllCards = (req, res) => {
 };
 
 module.exports.createCard = (req, res) => {
-  const { name, link } = req.body;
-
-  Card.create({ name, link, owner: req.user._id })// populate('owner')
+  Card.create({ ...req.body, owner: req.user._id })
     .then((card) => res.status(200).send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: err.message });
+        return;
+      }
+      res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  const { cardId } = req.params;
+
+  Card.findByIdAndRemove(cardId)
+    .populate(['owner', 'likes'])
     .then((card) => res.status(200).send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err.message }));
-};// .catch(() => res.status(404).send({ message: 'Card ID not found' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Card ID not found' });
+        return;
+      }
+      res.status(500).send({ message: err.message });
+    });
+};
 
 module.exports.likeCard = (req, res) => {
+  const { cardId } = req.params;
+
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .populate('likes')
+    .populate(['owner', 'likes'])
     .then((card) => res.status(200).send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Card ID not found' });
+        return;
+      }
+      res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.dislikeCard = (req, res) => {
+  const { cardId } = req.params;
+
   Card.findByIdAndUpdate(
-    req.params.cardId,
+    cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .populate(['owner', 'likes'])
     .then((card) => res.status(200).send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Card ID not found' });
+        return;
+      }
+      res.status(500).send({ message: err.message });
+    });
 };

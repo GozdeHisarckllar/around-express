@@ -11,7 +11,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator(v) {
-        return /https?:\/{2}w*[a-z0-9.\-]+[a-z0-9\-._~:?\/%#[\]@!$&'()*\+,;=]*/i.test(v);
+        return /https?:\/{2}(?:w{3}\.)?[a-z0-9\-\.]+(?:\.com\b)(?:\/[a-zA-Z0-9\-\._~:?\/%#[\]@!$&'()*\+,;=]*)?/.test(v);
       },
       message: (props) => `${props.value} is not a valid link!`,
     },
@@ -24,9 +24,7 @@ const cardSchema = new mongoose.Schema({
   },
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user', // ObjectId array *********
-    /* type: [Number],
-      default: undefined */
+    ref: 'user',
   }],
   createdAt: {
     type: Date,
