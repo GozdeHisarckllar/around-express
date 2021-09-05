@@ -1,8 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 
 const app = express();
 
+app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 

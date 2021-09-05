@@ -10,10 +10,16 @@ module.exports.findUser = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        res.status(404).send({ message: 'User ID not found' });
+        return;
+      }
+      res.status(200).send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'User ID not found' });
+        res.status(400).send({ message: err.message });
         return;
       }
       res.status(500).send({ message: err.message });
@@ -43,9 +49,15 @@ module.exports.updateProfile = (req, res) => {
       runValidators: true,
     },
   )
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        res.status(404).send({ message: 'User ID not found' });
+        return;
+      }
+      res.status(200).send({ data: user });
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(400).send({ message: err.message });
         return;
       }
@@ -64,9 +76,15 @@ module.exports.updateAvatar = (req, res) => {
       runValidators: true,
     },
   )
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        res.status(404).send({ message: 'User ID not found' });
+        return;
+      }
+      res.status(200).send({ data: user });
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         res.status(400).send({ message: err.message });
         return;
       }
